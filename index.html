@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="hypnoticCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('hypnoticCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let time = 0;
+
+    function drawHypnoticEffect() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const maxRadius = Math.min(canvas.width, canvas.height) / 2;
+
+      // Hypnotic pattern parameters
+      const numCircles = 12;
+      const frequency = 0.03;
+      const rotationSpeed = 0.005;
+
+      // Background gradient
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
+      gradient.addColorStop(0, "rgba(0, 0, 0, 1)");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < numCircles; i++) {
+        const angle = (i / numCircles) * Math.PI * 2 + time * rotationSpeed;
+        const radius = maxRadius * (1 - i / numCircles);
+        const alpha = 0.5 + 0.5 * Math.sin(time * frequency + i);
+
+        ctx.beginPath();
+        ctx.arc(
+          centerX + Math.cos(angle) * radius * 0.2,
+          centerY + Math.sin(angle) * radius * 0.2,
+          radius,
+          0,
+          Math.PI * 2
+        );
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.lineWidth = 8 - (i * 6 / numCircles);
+        ctx.stroke();
+      }
+
+      time += 1;
+      requestAnimationFrame(drawHypnoticEffect);
+    }
+
+    drawHypnoticEffect();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
